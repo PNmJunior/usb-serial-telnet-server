@@ -32,6 +32,8 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 
 import java.util.List;
 
+import android.content.ClipboardManager;
+import android.content.ClipData;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStopListener {
     final static String SETTING_TCP_PORT = "tcp_port";
     final static String SETTING_BAUD_RATE = "baud_rate";
@@ -224,8 +226,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
-        if (started)
-             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":"+ mTcpPort.getText());
+        if (started) {
+            mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":" + mTcpPort.getText());
+            //UsbSerialTelnetService.getIPAddress();
+            String pppp = UsbSerialTelnetService.getIPAddress() + ":" + mTcpPort.getText();
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(pppp, pppp);
+            clipboard.setPrimaryClip(clip);
+
+        }
         else
             mStatus.setText(R.string.not_started);
     }
