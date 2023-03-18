@@ -42,10 +42,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_PARITY = "parity";
     final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
     final static String SETTING_REMOVE_LF = "remove_lf";
+    final static String SETTING_IP_ROBOT = "ip_robot";
 
     UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
     Button mStartButton;
     Button mStopButton;
+    TextView mRobotIpText;
+    EditText mRobotIp;
+    Switch mRobotSw;
     EditText mTcpPort;
     EditText mBaudRate;
     Spinner mDataBits;
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
+        mRobotIp  = findViewById(R.id.editTextTcpPort);
+        mRobotIpText  = findViewById(R.id.textViewIpRobot);
+        mRobotSw = findViewById(R.id.switchIpRobot);
         mTcpPort = findViewById(R.id.editTextTcpPort);
         mBaudRate = findViewById(R.id.editTextNumberBaudRate);
         mDataBits = findViewById(R.id.spinnerDataBits);
@@ -144,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_PARITY, prefs.getInt(SETTING_PARITY, 0));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_NO_LOCAL_ECHO, prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         serviceIntent.putExtra(UsbSerialTelnetService.KEY_REMOVE_LF, prefs.getBoolean(SETTING_REMOVE_LF, true));
+        serviceIntent.putExtra(UsbSerialTelnetService.KEY_IP_ROBOT, prefs.getString(SETTING_IP_ROBOT, "192.168."));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         } else {
@@ -204,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .putInt(SETTING_PARITY, mParity.getSelectedItemPosition())
                 .putBoolean(SETTING_NO_LOCAL_ECHO, mNoLocalEcho.isChecked())
                 .putBoolean(SETTING_REMOVE_LF, mRemoveLF.isChecked())
+                .putString(SETTING_IP_ROBOT,mRobotIp.toString())
                 .commit();
     }
 
@@ -226,6 +235,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
+        mRobotIp.setEnabled(!started);
+        mRobotSw.setEnabled(!started);
+        mRobotIp.setText(prefs.getString(SETTING_IP_ROBOT,"168.192."));
         if (started) {
             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":" + mTcpPort.getText());
             //UsbSerialTelnetService.getIPAddress();

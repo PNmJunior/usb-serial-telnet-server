@@ -26,9 +26,12 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -42,11 +45,13 @@ public class UsbSerialTelnetService extends Service {
     final static String KEY_PARITY = "parity";
     final static String KEY_NO_LOCAL_ECHO = "no_local_echo";
     final static String KEY_REMOVE_LF = "remove_lf";
-
+    final static String KEY_IP_ROBOT = "ip_robot";
+    final static String KEY_Sw_ROBOT = "sw_robot";
     boolean mStarted = false;
     //UsbSerialPort mSerialPort = null;
     UsbSerialThread mUsbSerialThread = null;
     TcpServerThread mTcpServerThread = null;
+    TcpClientThread mTcpClientThread = null;
 
     int mTcpPort = 2323;
 
@@ -94,7 +99,27 @@ public class UsbSerialTelnetService extends Service {
                             intent.getIntExtra(KEY_DATA_BITS, 8),
                             intent.getIntExtra(KEY_STOP_BITS, UsbSerialPort.STOPBITS_1),
                             intent.getIntExtra(KEY_PARITY, UsbSerialPort.PARITY_NONE));
+                    if (true) {
+                        Socket socket = new Socket();
+                        //String ipRobotText = "ws://" + intent.getStringExtra(KEY_IP_ROBOT) + "/ws";
+                        String ipRobotText = "ws://" +"192.168.0.220" + "/ws";
+                        int portRobot = 80;
+                        SocketAddress ipC = new InetSocketAddress(ipRobotText, portRobot);
+                        socket.connect(ipC);
+                        mTcpClientThread = new TcpClientThread(this,null, socket);
+
+                        if (socket.isConnected())
+                        {
+                            Log.e("ano",ipRobotText);
+                        }
+                        else
+                        {
+                            Log.e("ne",ipRobotText);
+                        }
+
+                    }
                     ServerSocket serverSocket = new ServerSocket(intent.getIntExtra(KEY_TCP_PORT,2323));
+
                     mUsbSerialThread = new UsbSerialThread(this, serialPort);
                     mTcpServerThread = new TcpServerThread(this, serverSocket);
                     mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
