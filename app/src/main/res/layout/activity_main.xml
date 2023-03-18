@@ -52,7 +52,6 @@
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewStatus"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -93,8 +92,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/editTextNumberBaudRate"
                 app:layout_constraintEnd_toStartOf="@+id/editTextNumberBaudRate"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextNumberBaudRate"
-                app:layout_constraintVertical_bias="0.62" />
+                app:layout_constraintTop_toTopOf="@+id/editTextNumberBaudRate" />
 
             <EditText
                 android:id="@+id/editTextNumberBaudRate"
@@ -123,7 +121,6 @@
                 android:id="@+id/spinnerDataBits"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="12dp"
                 android:layout_marginEnd="24dp"
                 android:entries="@array/data_bits"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -201,8 +198,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/switchRemoveLf"
                 app:layout_constraintEnd_toStartOf="@+id/switchRemoveLf"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/switchRemoveLf"
-                app:layout_constraintVertical_bias="0.551" />
+                app:layout_constraintTop_toTopOf="@+id/switchRemoveLf" />
 
             <Switch
                 android:id="@+id/switchRemoveLf"
@@ -212,37 +208,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textRemoveLf"
                 app:layout_constraintTop_toBottomOf="@+id/switchNoLocalEcho" />
-
-            <TextView
-                android:id="@+id/textViewIpRobot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="IP adresa robota"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextIpRobot"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextIpRobot"
-                app:layout_constraintVertical_bias="0.653" />
-
-            <EditText
-                android:id="@+id/editTextIpRobot"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:ems="10"
-                android:inputType="text"
-                android:maxLength="30"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchRemoveLf" />
-
-            <Switch
-                android:id="@+id/switchIpRobot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" "
-                app:layout_constraintBottom_toBottomOf="@+id/editTextIpRobot"
-                app:layout_constraintEnd_toStartOf="@+id/editTextIpRobot"
-                app:layout_constraintTop_toTopOf="@+id/editTextIpRobot" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

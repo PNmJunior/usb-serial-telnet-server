@@ -32,7 +32,6 @@ public class TcpServerThread extends Thread {
                 TcpClientThread client = new TcpClientThread(mUsbSerialTelnetService, this, socket);
                 client.setNoLocalEcho(mNoLocalEcho);
                 client.setRemoveLf(mRemoveLf);
-                client.setRobot(false,"");
                 client.start();
                 mClients.add(client);
             }

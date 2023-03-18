@@ -21,8 +21,6 @@ public class TcpClientThread extends Thread {
     private boolean mNoLocalEcho = true;
     private boolean mRemoveLf = true;
     private byte mLastChar = 0;
-    private boolean mRobotSw = false;
-    private String mRobotIp = "";
 
     final static byte CMD_WILL = (byte) 0xFB;
     final static byte CMD_WONT = (byte) 0xFC;
@@ -78,10 +76,8 @@ public class TcpClientThread extends Thread {
         mSocket = null;
         mDataInputStream = null;
         mDataOutputStream = null;
-        if(mTcpServerThread != null) {
-            mTcpServerThread.removeClient(this);
-            Log.i(UsbSerialTelnetService.TAG, mAddress + ": stopped");
-        }
+        mTcpServerThread.removeClient(this);
+        Log.i(UsbSerialTelnetService.TAG, mAddress + ": stopped");
     }
 
     private void proceedBuffer() throws IOException {
@@ -137,40 +133,23 @@ public class TcpClientThread extends Thread {
 
     public void write(byte[] data, int offset, int len) throws IOException {
         if (mDataOutputStream == null) return;
-        int A = 0;
-        for (int i = 0;i < len; i++ )
-        {
-            if (data[offset + i] == (byte)0xFF)
-            {
-                A = 1;
+        List<Byte> output = new ArrayList<>();
+        for (int i = 0; i < len; i++){
+            byte b = data[offset + i];
+            if (b != (byte)0xFF) {
+                output.add(b);
+            } else {
+                // Escape 0xFF
+                output.add((byte)0xFF);
+                output.add((byte)0xFF);
             }
         }
-        if(A == 0)
-        {
-            mDataOutputStream.write(data, offset, len);
-            //mDataOutputStream.;
-        }
-        else {
-            List<Byte> output = new ArrayList<>();
-            for (int i = 0; i < len; i++) {
-                byte b = data[offset + i];
 
-                if (b != (byte) 0xFF) {
-                    output.add(b);
-                } else {
-                    // Escape 0xFF
-                    output.add((byte) 0xFF);
-                    output.add((byte) 0xFF);
-                }
-            }
-
-            // mDataOutputStream.write(Bytes.toArray(output)); // Guava lib make app too large :(
-            byte[] outputPrimitive = new byte[output.size()];
-            for (int i = 0; i < outputPrimitive.length; i++)
-                outputPrimitive[i] = output.get(i);
-            mDataOutputStream.write(outputPrimitive);
-            //mDataOutputStream.write(data, offset, len);
-        }
+        // mDataOutputStream.write(Bytes.toArray(output)); // Guava lib make app too large :(
+        byte[] outputPrimitive = new byte[output.size()];
+        for (int i = 0; i < outputPrimitive.length; i++)
+            outputPrimitive[i] = output.get(i);
+        mDataOutputStream.write(outputPrimitive);
     }
 
     public void close() {
@@ -195,11 +174,6 @@ public class TcpClientThread extends Thread {
 
     public void setNoLocalEcho(boolean noLocalEcho) {
         mNoLocalEcho = noLocalEcho;
-    }
-
-    public void setRobot(boolean RobotSw, String RobotIp) {
-        mRobotSw = RobotSw;
-        mRobotIp = RobotIp;
     }
 
     public void setRemoveLf(boolean removeLf) {
