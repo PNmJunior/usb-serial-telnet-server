@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onOpen() {
                 Log.i("WebSocket", "Session is starting");
-                webSocketClient.send("Hello World!");
+                webSocketClient.send(";A");
             }
 
             @Override
@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         try{
-                            TextView textView = findViewById(R.id.animalSound);
-                            textView.setText(message);
+                            //TextView textView = findViewById(R.id.animalSound);
+                            //textView.setText(message);
                         } catch (Exception e){
                             e.printStackTrace();
                         }
