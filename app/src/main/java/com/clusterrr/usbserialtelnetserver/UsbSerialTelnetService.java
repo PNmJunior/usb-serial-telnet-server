@@ -32,7 +32,12 @@ import java.net.ServerSocket;
 import java.util.Enumeration;
 import java.util.List;
 
+import tech.gusavila92.websocketclient.WebSocketClient;
+
 public class UsbSerialTelnetService extends Service {
+    public WebSocketClient webSocketClient2 = MainActivity.webSocketClient ;
+
+
     final static String TAG = "UsbSerialTelnet";
     final static String ACTION_NEED_TO_START = "need_to_start";
     final static String KEY_TCP_PORT = "tcp_port";
@@ -61,6 +66,7 @@ public class UsbSerialTelnetService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
+
         if (mStarted) {
             // Already started
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(UsbSerialTelnetService.this.getApplicationContext(), getString(R.string.already_started), Toast.LENGTH_LONG).show());
@@ -95,7 +101,8 @@ public class UsbSerialTelnetService extends Service {
                             intent.getIntExtra(KEY_STOP_BITS, UsbSerialPort.STOPBITS_1),
                             intent.getIntExtra(KEY_PARITY, UsbSerialPort.PARITY_NONE));
                     ServerSocket serverSocket = new ServerSocket(intent.getIntExtra(KEY_TCP_PORT,2323));
-                    mUsbSerialThread = new UsbSerialThread(this, serialPort);
+                    mUsbSerialThread = new UsbSerialThread(this, serialPort,webSocketClient2);
+                    mUsbSerialThread = new UsbSerialThread(this, serialPort,MainActivity.webSocketClient);
                     mTcpServerThread = new TcpServerThread(this, serverSocket);
                     mTcpServerThread.setNoLocalEcho(intent.getBooleanExtra(KEY_NO_LOCAL_ECHO, true));
                     mTcpServerThread.setRemoveLf(intent.getBooleanExtra(KEY_REMOVE_LF, true));

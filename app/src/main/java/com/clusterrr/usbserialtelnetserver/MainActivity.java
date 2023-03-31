@@ -36,18 +36,14 @@ import android.content.ClipboardManager;
 import android.content.ClipData;
 
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import tech.gusavila92.websocketclient.WebSocketClient;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, UsbSerialTelnetService.IOnStopListener {
-    private WebSocketClient webSocketClient;
+    public static WebSocketClient webSocketClient ;
     final static String SETTING_TCP_PORT = "tcp_port";
     final static String SETTING_BAUD_RATE = "baud_rate";
     final static String SETTING_DATA_BITS = "data_bits";
@@ -57,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_REMOVE_LF = "remove_lf";
 
     UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
+
     Button mStartButton;
     Button mStopButton;
     EditText mTcpPort;
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        createWebSocketClient();
+        //createWebSocketClient();
         mStartButton = findViewById(R.id.buttonStart);
         mStopButton = findViewById(R.id.buttonStop);
         mTcpPort = findViewById(R.id.editTextTcpPort);
@@ -93,12 +90,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateSettings();
     }
 
-
-    private void createWebSocketClient() {
+    public void sendMessage(String textOut) {
+        Log.i("WebSocketSend", textOut);
+        webSocketClient.send(textOut);
+    }
+    private void createWebSocketClient(String addressIp) {
         URI uri;
         try {
             // Connect to local host
-            uri = new URI("ws://10.0.2.2:8080/websocket");
+            uri = new URI(addressIp);
         }
         catch (URISyntaxException e) {
             e.printStackTrace();
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         try{
                             //TextView textView = findViewById(R.id.animalSound);
                             //textView.setText(message);
+                            Log.i("ClientRead", message);
                         } catch (Exception e){
                             e.printStackTrace();
                         }
@@ -229,6 +230,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startService(serviceIntent);
         }
         bindService(serviceIntent, serviceConnection, 0);
+        String ip = "ws://192.168.0.221/ws";
+        createWebSocketClient(ip);
     }
 
     private void stop() {
@@ -236,6 +239,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stopService(serviceIntent);
         mServiceBinder = null;
         updateSettings();
+        webSocketClient.close();
+        Log.i("WebSocket", "close");
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -244,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                        IBinder service) {
             mServiceBinder = (UsbSerialTelnetService.ServiceBinder) service;
             mServiceBinder.setOnStopListener(MainActivity.this);
+
             updateSettings();
             Log.d(UsbSerialTelnetService.TAG, "Service connected");
         }

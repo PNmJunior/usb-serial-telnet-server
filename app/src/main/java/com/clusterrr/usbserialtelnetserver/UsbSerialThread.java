@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-
+import tech.gusavila92.websocketclient.WebSocketClient;
 public class UsbSerialThread extends Thread {
     final static int WRITE_TIMEOUT = 1000;
 
@@ -19,11 +19,13 @@ public class UsbSerialThread extends Thread {
     private SerialInputOutputManager.Listener mListener; // Synchronized by 'this'
     public synchronized SerialInputOutputManager.Listener getListener() {return mListener;}
     private UsbSerialTelnetService mUsbSerialTelnetService;
+    private WebSocketClient webSocketClient;
     private UsbSerialPort mSerialPort;
 
-    public UsbSerialThread(UsbSerialTelnetService usbSerialTelnetService, UsbSerialPort serialPort) {
+    public UsbSerialThread(UsbSerialTelnetService usbSerialTelnetService, UsbSerialPort serialPort, WebSocketClient wsc) {
         mUsbSerialTelnetService = usbSerialTelnetService;
         mSerialPort = serialPort;
+        webSocketClient = wsc;
         //mListener;
         int llll = serialPort.getReadEndpoint().getMaxPacketSize();
         Log.d("Max velikost", Integer.toString(llll));
@@ -58,6 +60,7 @@ public class UsbSerialThread extends Thread {
                 }
                 // Write data
                 mUsbSerialTelnetService.writeClients(buffer, 0, l);
+                webSocketClient.send(";b");
             }
         }
         catch (IOException e) {
