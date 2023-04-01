@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onOpen() {
                 Log.i("WebSocket", "Session is starting");
                 webSocketClient.send(";A");
+                mIp.setTextColor(Color.GREEN);
             }
 
             @Override
@@ -148,13 +150,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onException(Exception e) {
                 System.out.println(e.getMessage());
+                mIp.setTextColor(Color.YELLOW);
             }
 
             @Override
             public void onCloseReceived() {
                 Log.i("WebSocket", "Closed ");
                 System.out.println("onCloseReceived");
+                mIp.setTextColor(Color.RED);
             }
+
         };
 
         webSocketClient.setConnectTimeout(10000);
@@ -244,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateSettings();
         webSocketClient.close();
         Log.i("WebSocket", "close");
+        mIp.setTextColor(Color.WHITE);
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
