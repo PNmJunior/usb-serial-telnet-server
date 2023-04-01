@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final static String SETTING_PARITY = "parity";
     final static String SETTING_NO_LOCAL_ECHO = "no_local_echo";
     final static String SETTING_REMOVE_LF = "remove_lf";
+    final static String SETTING_IP_Adress = "IP_adress";
 
     UsbSerialTelnetService.ServiceBinder mServiceBinder = null;
 
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView mStatus;
     Switch mNoLocalEcho;
     Switch mRemoveLF;
+    EditText mIp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mStatus = findViewById(R.id.textViewStatus);
         mNoLocalEcho = findViewById(R.id.switchNoLocalEcho);
         mRemoveLF = findViewById(R.id.switchRemoveLf);
+        mIp = findViewById(R.id.editTextIP);
 
         mStartButton.setOnClickListener(this);
         mStopButton.setOnClickListener(this);
@@ -289,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .putInt(SETTING_PARITY, mParity.getSelectedItemPosition())
                 .putBoolean(SETTING_NO_LOCAL_ECHO, mNoLocalEcho.isChecked())
                 .putBoolean(SETTING_REMOVE_LF, mRemoveLF.isChecked())
+                .putString(SETTING_IP_Adress,mIp.getText().toString())
                 .commit();
     }
 
@@ -311,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mParity.setSelection(prefs.getInt(SETTING_PARITY, 0));
         mNoLocalEcho.setChecked(prefs.getBoolean(SETTING_NO_LOCAL_ECHO, true));
         mRemoveLF.setChecked(prefs.getBoolean(SETTING_REMOVE_LF, true));
+        mIp.setText(prefs.getString(SETTING_IP_Adress,"192.168."));
         if (started) {
             mStatus.setText(getString(R.string.started_please_connect) + " telnet://" + UsbSerialTelnetService.getIPAddress() + ":" + mTcpPort.getText());
             //UsbSerialTelnetService.getIPAddress();
