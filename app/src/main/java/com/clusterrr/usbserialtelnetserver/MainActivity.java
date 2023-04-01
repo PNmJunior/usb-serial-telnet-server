@@ -233,8 +233,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startService(serviceIntent);
         }
         bindService(serviceIntent, serviceConnection, 0);
-        String ip = "ws://192.168.0.221/ws";
-        createWebSocketClient(ip);
+        String ipConnect = "ws://" + mIp.getText().toString() + "/ws";
+        createWebSocketClient(ipConnect);
     }
 
     private void stop() {
