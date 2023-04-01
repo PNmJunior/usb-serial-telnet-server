@@ -43,7 +43,7 @@ public class UsbSerialThread extends Thread {
         if (start != -1)
         {
             int stop = nalez.indexOf(";t");
-            if(stop != -1)
+            if(stop > start)
             {
                 webSocketClient.send(nalez.substring(start+2,stop));
                 nalez = nalez.substring(stop + 2);
