@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 import tech.gusavila92.websocketclient.WebSocketClient;
 public class UsbSerialThread extends Thread {
     final static int WRITE_TIMEOUT = 1000;
@@ -32,10 +34,31 @@ public class UsbSerialThread extends Thread {
         mReadBuffer = ByteBuffer.allocate(serialPort.getReadEndpoint().getMaxPacketSize());
     }
 
+    private String nalez;
+    public  void zpracovani(String input)
+    {
+        nalez += input;
+        Log.i("nalez:", nalez);
+        int start = nalez.indexOf(";s");
+        if (start != -1)
+        {
+            int stop = nalez.indexOf(";t");
+            if(stop != -1)
+            {
+                webSocketClient.send(nalez.substring(start+2,stop));
+                nalez = nalez.substring(stop + 2);
+                zpracovani("");
+            }
+            else
+            {
+                nalez = nalez.substring(start);
+            }
+        }
+    }
+
     @Override
     public void run() {
         //byte buffer[] = new byte[1024];
-
         try {
             while (true) {
                 byte[] buffer;
@@ -60,7 +83,12 @@ public class UsbSerialThread extends Thread {
                 }
                 // Write data
                 mUsbSerialTelnetService.writeClients(buffer, 0, l);
-                webSocketClient.send(";b");
+                final byte[] data2 = new byte[len];
+                System.arraycopy(buffer, 0, data2, 0, len);
+                Log.i("pridavani", new String(data2,StandardCharsets.UTF_8));
+                zpracovani(new String(data2,StandardCharsets.UTF_8));
+                //mUsbSerialTelnetService.writeClients(";s;e;t".getBytes(StandardCharsets.UTF_8), 0, l);
+                //webSocketClient.send(";b");
             }
         }
         catch (IOException e) {
